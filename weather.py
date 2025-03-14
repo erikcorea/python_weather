@@ -3,8 +3,18 @@ import argparse
 import json
 import sys
 from urllib import parse, request, error
+from pprint import pp
 
 BASE_WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/weather"
+
+def display_weather_info(weather_data, metric=False):
+  city = weather_data["name"]
+  weather_description = weather_data["weather"][0]["description"]
+  temp = weather_data["main"]["temp"]
+
+  print(f"{city}", end="")
+  print(f"\t{weather_description.capitalize()}", end=" ")
+  print(f"({temp}°{'C' if metric else 'F'})")
 
 def get_weather_data(query_url):
   """
@@ -83,4 +93,4 @@ if __name__ == "__main__":
   user_args = read_user_cli_args()
   query_url = build_weather_query(user_args.city, user_args.metric)
   weather_data = get_weather_data(query_url)
-  print(weather_data)
+  display_weather_info(weather_data, user_args.metric)
