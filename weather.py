@@ -4,16 +4,50 @@ import json
 import sys
 from urllib import parse, request, error
 from pprint import pp
+import style
 
 BASE_WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/weather"
 
+THUNDERSTORM = range(200, 300)
+DRIZZLE = range(300, 400)
+RAIN = range(500, 600)
+SNOW = range(600, 700)
+ATMOSPHERE = range(700, 800)
+CLEAR = range(800, 801)
+CLOUDY = range(801, 900)
+
+
 def display_weather_info(weather_data, metric=False):
   city = weather_data["name"]
+  weather_id = weather_data["weather"][0]["id"]
   weather_description = weather_data["weather"][0]["description"]
   temp = weather_data["main"]["temp"]
+  style.change_color(style.REVERSE)
+  print(f"{city:^{style.PADDING}}", end="")
+  style.change_color(style.RESET)
 
-  print(f"{city}", end="")
-  print(f"\t{weather_description.capitalize()}", end=" ")
+  if weather_id in THUNDERSTORM:
+    style.change_color(style.RED)
+  elif weather_id in DRIZZLE:
+    style.change_color(style.CYAN)
+  elif weather_id in RAIN:
+    style.change_color(style.BLUE)
+  elif weather_id in SNOW:
+    style.change_color(style.WHITE)
+  elif weather_id in ATMOSPHERE:
+    style.change_color(style.BLUE)
+  elif weather_id in CLEAR:
+    style.change_color(style.YELLOW)
+  elif weather_id in CLOUDY:
+    style.change_color(style.WHITE)
+  else:  # In case the API adds new weather codes
+    style.change_color(style.RESET)
+  
+  print(
+    f"\t{weather_description.capitalize():^{style.PADDING}}", 
+    end=" ",
+  )
+  style.change_color(style.RESET)
   print(f"({temp}°{'C' if metric else 'F'})")
 
 def get_weather_data(query_url):
